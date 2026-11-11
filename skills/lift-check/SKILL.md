@@ -50,6 +50,64 @@ A migration is successful only when its technical compatibility and existing app
 
 ---
 
+## Mandatory independent fidelity and evidence contract
+
+Independently compare original source/baseline, approved plan and actual target; do not treat executor statuses, compilation or HTTP 200 as proof of preservation. Account for all original features, pages/controls/routes, integrations, schema objects, assets and lifecycle events, including retained/excluded items with explicit outcomes. Preserve business rules, API/protocol contracts, data, identity, presentation, accessibility, diagnostics, background lifecycle, document formats and deployment behavior. Do not change application code or perform destructive tests.
+
+### Source-to-target and UI parity
+
+Reconstruct and verify the source-to-target matrix: original file, class/method/control, feature ID, migration task, target file/class/page/service, independently obtained validation evidence, current status and open findings. For Web Forms include ASPX, code-behind, designer, master, user/server controls, event handlers, Select/Insert/Update/Delete methods, ViewState/PostBack, routes and query parameters, and the target Razor page/model/handler/service or other target. Unknown or missing targets remain visible.
+
+Independently audit every `.aspx`, `.ascx`, `.master`, `.cshtml`, `.vbhtml`, layout, partial, user control, shared component, route, static page and generated HTML surface, including role-specific states. Maintain a page/component parity matrix using Planned, Implemented, Source-reviewed, Render-reviewed, Manually validated, Blocked or Intentionally changed with approval, with evidence and separate functional validation status. Compare original and target files/routes, titles/text, master/layout, header/footer/navigation/menus/category controls/breadcrumbs, buttons/links/inputs/labels/tables/grids/validation/uploads/downloads/dialogs, errors and empty states, placement and visual hierarchy.
+
+Report missing pages, controls and shared components; changed text, button placement/behavior, input names and form contracts; missing validation, broken navigation, missing CSS/JavaScript/fonts/images/icons; responsive regressions; and HTML structure/semantics/selector changes affecting accessibility, CSS, scripts, automation, analytics or integrations. Check script and style load order, themes/bundles/minification, AJAX/callbacks, hidden fields, session, generated URLs, browser assumptions, role-based visibility and accessibility labels. Detect a silently substituted framework starter visual system.
+
+Inventory missing, renamed, orphaned or unintentionally replaced images, fonts, CSS/JS, source maps, favicons, bundles/minified assets, resources/localization, designers, static content, upload directories, email and document templates; inspect publish inclusion. Where screenshots, browser rendering/automation or runtime access are unavailable, mark Not Tested, Partially Validated or Blocked with reasons and provide a manual checklist; source review or HTTP 200 alone does not establish visual/behavioral parity.
+
+### Data, identity, configuration and runtime
+
+Independently inspect real schema where authorized safe read-only access exists; otherwise mark real schema and data unverified. Compare legacy-to-target ORM mappings and tables, columns/types/nullability, keys/indexes/foreign keys/constraints, procedures/views/triggers, seed data, identity and session/cache tables, serialized/persisted data and provider behavior. Verify separate approval for every schema change, including additive changes, and specific authorization for destructive or irreversible operations and data transformations. Compare available before/after schema, row counts, data integrity, rollout, backups and rollback evidence; matching class/property names are not schema proof. Verify existing data is readable and not silently discarded, queries and data types match, and decimals, dates, nulls and identifiers remain correct. Only use safe non-production tests; identify missing baseline evidence.
+
+Independently assess password hashes, authentication cookies, sessions/cart, tokens, 2FA, external login, roles/claims and password-reset continuity as separate items. A compatible legacy hash does not establish cookie, token or session compatibility. Verify or specify manual checks for existing-user login, registration, logout, password change/reset, lockout, 2FA, phone/email verification, external login, role-based authorization, cookie persistence and session/cart continuity; mark truly inapplicable scenarios with evidence.
+
+Compare `web.config`, `app.config`, appsettings, transforms, environment variables, Docker, launch settings, IIS, certificates, connection strings and external provider settings. Never copy credentials, private keys, tokens or secrets into source, reports, logs or prompts; cite only redacted setting names/references. When credentials or services are unavailable, mark the integration Blocked or Not Tested, give operational impact and manual steps, and never disable it, invent credentials or report a success-shaped default.
+
+For each intended target environment independently verify paths/case, file permissions, static content/uploads, SQL and session/cache providers, authentication, TLS/certificates, native dependencies, containers, environment variables, health checks, startup/shutdown, publish output and process management. A Windows build or local Kestrel start does not prove Linux, container or cloud compatibility.
+
+### Manual validation and reporting
+
+Both `UPGRADE_VALIDATION.md` and `REGRESSION_REPORT.md` must contain a `Manual Validation Checklist`. For each check unavailable through automation, browser/runtime, credentials or external services, include feature ID, exact URL/command/user action, required environment/data/credentials/service (names only), expected result, evidence to capture, pass/fail criteria, risk if it fails, responsible party and status. Explain missing prerequisites and operational impact; ask the user to perform safe checks when appropriate. Keep Not Tested, Partially Validated and Blocked distinct from Passed and Failed; lack of a failure is not a pass. Independently review any user-supplied evidence before treating the item as validated.
+
+`UPGRADE_VALIDATION.md` must contain overall result, percentage metrics, project, package, UI parity, feature, database/schema, authentication and integration matrices, manual checklist, findings, unverified areas, user actions and production-readiness limitations. `REGRESSION_REPORT.md` must contain percentage metrics; feature and UI/page/control counts; fully validated, partially validated, not tested and blocked features; confirmed regressions; missing controls/pages/assets; HTML/CSS/JavaScript, database/data, authentication and integration differences; manual checklist; and prioritized corrective actions. Report differences separately from unverified items and cite evidence.
+
+Review recorded Agent-inferred decisions against their evidence, applicable alternatives and approved scope. They must not be presented as user-approved or used to authorize changes to behavior, contracts, schema, security, data, deployment or other material decisions. Report unsupported inference and missing required authorization without changing the implementation.
+
+### Progress metrics
+
+In both reports independently report each metric as numerator/denominator and percentage (`100 * numerator / denominator`), its definition, exclusions and mutually exclusive status counts. Use stable IDs and the approved scope/baseline. Report 0/0 as N/A, never 100%, only when the inventory confirms no applicable items; if the denominator is unknown, report Unknown, not 0/0. If a partial inventory yields a denominator, label its percentage provisional and identify unknown scope. Exclude only documented out-of-scope or genuinely Not Applicable items, with counts and reasons. Unknown, blocked, failed and untested items remain in the denominator.
+
+Use these denominators and numerators:
+
+1. Mandatory task completion: independently verified completed mandatory tasks / all in-scope mandatory tasks; report task statuses separately from validation.
+2. Feature migration coverage: implemented or approved replacement features / in-scope original features, including implemented but unvalidated.
+3. Feature validation coverage: fully validated features / in-scope original features.
+4. UI/page/component parity: fully validated UI surfaces and controls / in-scope inventoried UI surfaces and controls, counted as distinct stable IDs.
+5. API/contract coverage: fully validated API routes and external contract items / in-scope inventoried API routes and external contract items.
+6. Database/schema compatibility: fully validated schema and data compatibility items / in-scope inventoried schema and data compatibility items.
+7. Authentication/identity: fully validated identity continuity scenarios / in-scope applicable identity continuity scenarios.
+8. External integration coverage: fully validated integrations / in-scope inventoried integrations.
+9. Runtime/manual validation: fully validated runtime and manual checklist items / in-scope applicable runtime and manual checklist items.
+10. Deployment readiness: fully validated deployment requirements / in-scope applicable target-environment deployment requirements.
+11. Rollback readiness: fully validated rollback requirements / in-scope applicable rollback requirements.
+
+For coverage items report Fully validated, Implemented but unvalidated, Partially validated, Not tested, Blocked and Failed; list Not applicable separately with reasons. For a single status per item use Failed if a check failed; otherwise Blocked if a prerequisite prevents a required check; otherwise Fully validated if all required evidence passes; otherwise Partially validated if some evidence exists; otherwise Implemented but unvalidated if implemented; otherwise Not tested. Retain all evidence and blockers, so counts reconcile to the denominator. Count implemented features for migration coverage independently of validation status: an implemented feature can also be Blocked or Failed. Task completion is not validation coverage. Percentages are indicators, not success criteria: one missing critical workflow, security defect, data-loss risk or unverified mandatory integration prevents PASS or PASS WITH ISSUES.
+
+### Retirement safeguard
+
+Report whether separate user authorization and all retirement prerequisites exist: target outcome for every original feature; parity status for every UI page/control/master/layout; CSS/HTML/JS/assets compared; database/data and authentication continuity verified or explicitly accepted; integrations tested or manually validated; manual checks completed or explicitly accepted as blocked; no unresolved Critical or High findings; and rollback artifacts. Accepted limitations remain unverified and do not become PASS. Never delete or retire a legacy project during validation.
+
+---
+
 # 2. Core Validation Principles
 
 Follow these principles throughout validation.
@@ -259,11 +317,11 @@ Examples:
 
 - Medium or Low severity findings.
 - Non-critical warnings.
-- Deferred testing.
+- Deferred testing only for non-mandatory, non-critical scenarios.
 - Minor performance differences.
 - Optional improvements not completed.
 
-All outstanding issues must be documented.
+All outstanding issues must be documented. No unresolved Critical or High finding, unverified mandatory integration, critical workflow, security defect or data-loss risk is compatible with PASS WITH ISSUES.
 
 ## FAIL
 
@@ -630,9 +688,7 @@ Validate:
 - URL generation.
 - Error pages.
 
-Do not require byte-for-byte identical HTML when legitimate framework-generated markup changes exist.
-
-Focus on preserving behavior and user workflows.
+Do not require byte-for-byte identical HTML when legitimate framework-generated markup changes exist. Independently verify that any differences preserve visual presentation, semantics and selectors used by CSS, JavaScript, accessibility, automation and integrations, as well as behavior and user workflows.
 
 ## 10.3 ASP.NET Web Forms migration validation
 
@@ -1474,9 +1530,10 @@ Use only when:
 Use when:
 
 - Core migration requirements are satisfied.
-- No unresolved Critical defects exist.
+- No unresolved Critical or High findings exist.
 - Remaining issues are non-blocking.
 - Outstanding risks are explicitly documented.
+- Mandatory integrations and critical workflows have sufficient evidence.
 
 ## FAIL
 

@@ -46,6 +46,44 @@ The migration plan must answer:
 
 ---
 
+## Mandatory preservation, traceability and verification contract
+
+Extend `UPGRADE_PLAN.md` with the following matrices, concrete dependency-ordered tasks, evidence requirements and manual checklist. Apply them to every in-scope legacy .NET Framework, MVC, Web Forms, Razor, server-rendered, hybrid, API, service, database, integration and document-processing component. Account for retained and excluded original items with an explicit outcome; do not silently drop a feature, UI control, route, integration, schema object, asset or lifecycle event. Preserve business rules, public routes and contracts, existing data, identity, presentation, accessibility, diagnostics, background lifecycle, file formats and deployment behavior. Compilation is not functional verification.
+
+### Source-to-target and UI parity matrices
+
+Extend the readiness traceability matrix with original file, class/method/control, feature ID, migration task ID, target file/class/page/service, validation evidence, current status and open findings. Include each page, shared component, control, route/alias, integration, schema object, asset and lifecycle event. For Web Forms explicitly map ASPX, code-behind, designer, master, user and server controls, event handlers, Select/Insert/Update/Delete methods, ViewState/PostBack, routes and query parameters to the target Razor page/model/handler/service or other chosen implementation. Mark unknown targets and evidence as unknown, not invented.
+
+Create a page/component parity matrix for every `.aspx`, `.ascx`, `.master`, `.cshtml`, `.vbhtml`, layout, partial, user control, shared component, route, static page and generated HTML surface. Include source and target paths/routes, linked controls and features, shared layout mapping, findings and evidence. Give each item one of: Planned, Implemented, Source-reviewed, Render-reviewed, Manually validated, Blocked, or Intentionally changed with approval. Keep evidence and detailed validation status separate from this progress label; source review or a 200 response does not imply render or behavioral validation.
+
+Create explicit tasks to preserve shared layouts/master pages, navigation/menus, CSS/themes and their selectors/load order, JavaScript/bundles and behavior, fonts/images/icons/static assets, responsive and accessibility behavior, form names/contracts and validation, HTML semantics and selectors, visible text/button placement/labels/visual hierarchy, error and empty states, and representative original-versus-target pages. Inventory and plan missing, renamed, orphaned and replaced images, fonts, CSS/JS, source maps, favicons, bundles/minified assets, resources/localization, designer files, static content, upload directories, email and document templates. Account for publish inclusion. Do not replace the original visual system with a framework starter template unless the user explicitly approves that change.
+
+### Database and identity gates
+
+For each database, plan a legacy-to-target schema and ORM table/column mapping covering tables, columns/types/nullability, keys/indexes/foreign keys/constraints, procedures/views/triggers, seed data, identity tables, session/cache tables, persisted serialized data and provider behavior. Distinguish read-only compatibility, additive backward-compatible, destructive, irreversible and data-transforming operations. Define existing data retention, before/after schema evidence, row-count and data-integrity checks, manual SQL verification queries, non-destructive rollout, backups and tested recovery/rollback limitations. Class/property names alone do not prove compatibility. Require separately recorded explicit user authorization for every proposed schema change, including additive changes; destructive, irreversible and data transformations also need specific authorization and must not be implied by general plan approval.
+
+Create separate compatibility and validation items for password hashes, authentication cookies, sessions/cart, tokens, 2FA, external login, roles/claims and password reset. A compatible hash does not imply compatible cookies, tokens or sessions. Plan explicit verification or manual procedures for existing-user login, registration, logout, password change/reset, lockout, 2FA, phone/email verification, external login, role-based authorization, cookie persistence and session/cart continuity, marking each applicable or evidenced Not Applicable.
+
+### Safe decisions, configuration and deployment
+
+Infer a technical choice without asking only when evidence shows an effectively mandatory or sole supported path, it is reversible, behavior and public contracts do not change, no data-loss or deployment-risk change occurs and existing approved scope/requirements authorize it. Record decision, evidence, why alternatives are inapplicable and `Agent-inferred`; it is not user approval and does not authorize execution. For example, do not ask MVC versus Razor Pages if only one is practical and supported under the actual target and architecture; otherwise compare valid alternatives and ask when the choice is material.
+
+Ask for decisions affecting business behavior, public APIs/routes, database/schema changes, authentication continuity requirements, security policy, deployment topology, licensing, external contracts, data deletion/transformation, scope expansion or retirement of legacy systems. Investigate before asking; no inference overrides the mandatory plan approval and separate high-impact authorizations.
+
+Plan comparisons of `web.config`, `app.config`, appsettings, transforms, environment variables, Docker, launch settings, IIS, certificates, connection strings and external provider settings. Record setting names and redacted references, never credentials, private keys or token values in source, reports, plans, logs or prompts. Unavailable credentials/services mean Blocked or Not Tested, impact and manual validation, not disabled integrations, fake credentials or success-shaped defaults.
+
+For each intended deployment environment, plan validation of paths/case, permissions, static content/uploads, SQL and session/cache providers, authentication, TLS/certificates, native dependencies, containers, environment variables, health checks, startup/shutdown, publish output and process management. Do not infer Linux/container/cloud readiness from a Windows build or local Kestrel start.
+
+### Manual validation and retirement
+
+Include a `Manual Validation Checklist` in `UPGRADE_PLAN.md` for each scenario lacking safe automation, browser/runtime access, credentials, data or services. Each row must contain feature ID, exact URL/command/user action, required environment/data/credentials/service (names only), expected result, evidence to capture, pass/fail criteria, risk if it fails, responsible party and status. Status must distinguish Not Tested, Partially Validated, Blocked, Passed and Failed; lack of a failure is not a pass. Explain the missing prerequisite and operational impact; ask the user to perform applicable checks when appropriate. The executor copies and updates results in `UPGRADE_EXECUTION_LOG.md`, not in the fingerprinted plan; the validator independently reports checklists in both validation reports.
+
+Define stable, countable baseline items and acceptance evidence for mandatory tasks, features, UI surfaces/controls, API/contracts, database/schema compatibility, identity scenarios, integrations, runtime/manual checks, deployment and rollback requirements. Identify applicability and exclusions so execution, workflow status and independent reports can compute the required numerator/denominator metrics without counting unknown or blocked items as passes. Identify incomplete inventories explicitly and do not invent denominators.
+
+Plan separate legacy retirement, not an automatic migration task. Do not delete or retire a legacy project until every original feature has a target outcome; every UI page/control/master/layout has a parity status; CSS/HTML/JS/assets have been compared; database/data and authentication continuity have been verified or explicitly accepted; integrations have been tested or manually validated; manual checks are completed or explicitly accepted as blocked; no Critical or High findings remain unresolved; rollback artifacts exist; and the user separately and explicitly authorizes retirement. Accepted unknowns remain unverified and do not become PASS.
+
+---
+
 # 2. Mandatory Inputs
 
 The primary input is:
@@ -164,7 +202,7 @@ Every important migration decision must have:
 
 An agent recommendation is not a user decision.
 
-Do not treat an architectural choice as approved merely because one option appears technically preferable.
+Do not treat an architectural choice as approved merely because one option appears technically preferable. An evidence-backed, reversible and non-material decision within approved requirements can instead be recorded as Agent-inferred under the contract above.
 
 ### 3.7 Do not hide uncertainties
 
@@ -647,7 +685,7 @@ Evaluate alternatives for:
 - Session state.
 - Third-party controls.
 
-For each major Web Forms module, evaluate:
+For each major Web Forms module, evaluate applicable options:
 
 1. Reimplementing the UI using ASP.NET Core MVC.
 2. Reimplementing the UI using Razor Pages.
@@ -656,7 +694,7 @@ For each major Web Forms module, evaluate:
 5. Temporarily retaining the legacy application as a separately hosted application.
 6. Gradually migrating modules using an incremental approach.
 
-Compare the alternatives.
+Compare applicable alternatives. Do not ask for a preference when evidence shows only one practical supported option under the approved constraints and the deterministic inference conditions above hold.
 
 Consider:
 
@@ -1344,7 +1382,7 @@ The agent may proceed without asking the user when:
 - The change is technically straightforward.
 - There is one clearly supported migration approach.
 - The change does not alter business behavior.
-- The change does not introduce significant architectural differences.
+- The change does not introduce architectural differences that materially affect behavior, scope, deployment, contracts, data, licensing or security.
 - The decision is reversible and low-risk.
 - The approved requirements already authorize the approach.
 
@@ -1355,24 +1393,24 @@ Examples:
 - Updating project configurations required by the target framework.
 - Migrating an API whose equivalent modern implementation is unambiguous.
 
-Record the decision and technical rationale.
+Record the decision, technical rationale, evidence and why alternatives are inapplicable as Agent-inferred, not user-approved.
 
 ### Category B: User Consultation Required
 
 Ask the user when:
 
-- Multiple viable migration approaches exist.
-- The choice materially changes architecture.
+- Multiple viable migration approaches exist and their choice materially affects behavior, scope, deployment, contracts, data, licensing or security.
+- An architectural choice materially affects behavior, scope, deployment, contracts, data, licensing or security.
 - The choice affects deployment or operating system requirements.
 - The change could affect backward compatibility.
 - The decision changes migration scope or effort significantly.
-- The replacement technology has meaningful trade-offs.
+- The replacement technology has material trade-offs.
 - The existing behavior is unclear and cannot be established from code.
 - Business requirements are missing.
 
 Examples:
 
-- ASP.NET Web Forms migration to MVC versus Razor Pages.
+- ASP.NET Web Forms migration to MVC versus Razor Pages when both are viable and the choice has material consequences.
 - Retaining Windows-specific functionality versus making it cross-platform.
 - Replacing Excel Interop with OpenXML versus another library.
 - Replacing WCF using REST versus gRPC.
@@ -1438,7 +1476,7 @@ Do not present a recommendation as a user-approved decision.
 
 ## 23.4 Decision presentation format
 
-Use the following structure.
+Use the following structure only for a material choice requiring user consultation; apply the deterministic inference conditions above first.
 
 ### DEC-001: Legacy Web Forms Migration Strategy
 
@@ -2081,7 +2119,7 @@ The planning phase is successful when:
 8. Important risks have mitigation and validation strategies.
 9. Rollback requirements are documented.
 10. Effort and complexity are estimated realistically.
-11. Significant architectural decisions have been presented to the user.
+11. Material architectural decisions requiring consultation have been presented to the user; deterministic inferences are documented separately.
 12. User feedback has been incorporated.
 13. The execution agent has clear instructions.
 14. The user has an opportunity to review and approve the plan.

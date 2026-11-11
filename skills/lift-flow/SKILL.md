@@ -44,6 +44,51 @@ Step 4 must remain a separate user-initiated activity.
 
 ---
 
+## Mandatory cross-stage preservation and quality contract
+
+The child skills remain authoritative for their stage and their read-only or approval restrictions. Verify the following at each handoff; do not treat document length, compilation or HTTP 200 as evidence of behavioral or presentation parity. Preserve business rules and workflows, public APIs/routes, database schema/data, authentication and identity continuity, external protocols, UI presentation/semantics/assets/accessibility/responsiveness, diagnostics and error handling, background lifecycle, file formats and deployment behavior. No feature, page/control/route, integration, schema object, asset or lifecycle event may disappear without an explicit status.
+
+1. **Readiness:** require a repository-wide baseline with stable feature and inventory IDs, exhaustive discovered Web Forms/MVC/Razor/server-rendered/hybrid surfaces, controls, routes, shared components, assets and UI states, plus database/schema, identity/session, configuration, integration and target-environment inventories. Unknown or inaccessible areas, runtime-only UI behavior and incomplete enumeration must be explicit. Preserve original source evidence for comparison; do not demand an invented target during discovery.
+2. **Planning:** require a source-to-target matrix linking original file/class/method/control and feature to task, target, evidence, status and findings; Web Forms mappings must cover page, code-behind, designer, master, user/server controls, handlers, Select/Insert/Update/Delete, ViewState/PostBack, routes/query parameters and target page/model/handler/service. Require the page/component parity statuses Planned, Implemented, Source-reviewed, Render-reviewed, Manually validated, Blocked and Intentionally changed with approval, with evidence separate from validation. Ensure tasks explicitly preserve visual system, layouts, navigation, HTML/CSS/JS and selectors, form/validation, responsive/accessibility behavior and assets; prohibit unapproved starter-template replacement. Require database/ORM/identity/session mappings, retention, integrity/row-count checks, safe rollout, backup, rollback limits, manual SQL and separate authorization for every schema change.
+3. **Execution:** confirm the exact-byte plan fingerprint and independent approval precheck remain valid. Track per-task evidence and actual source-to-target outcomes in the execution log, not by modifying the approved plan. Require recorded source comparison or safe manual check and all UI task acceptance criteria, preserve routes and assets, and prevent any schema change without its separate explicit authorization. Before approved schema changes require real connectivity/schema and target environment checks, backup and before/after evidence; avoid destructive seed and drop/recreate behavior. Missing credentials/services must be Blocked or Not Tested, never silently disabled or replaced with fake credentials.
+4. **Independent validation:** hand off for the user to initiate `lift-check` in a fresh session; never automatically invoke it or substitute execution's claims for independent evidence. Require its two reports to contain the UI, data, identity, integration and deployment comparisons, findings, manual checklists and metrics below. The executor must not create those validator reports.
+
+At every stage separately track password hash, authentication cookie, session/cart, token, 2FA, external login, role/claim and password-reset continuity. Require verification or manual procedures for existing-user login, registration, logout, password change/reset, lockout, 2FA, phone/email verification, external login, role authorization, cookie persistence and session/cart continuity; a compatible password hash does not prove cookie or session compatibility.
+
+Require comparison of `web.config`, `app.config`, appsettings, transforms, environment variables, Docker, launch settings, IIS, certificates, connection strings and external provider settings. Never copy credentials, tokens, private keys or secrets into source, artifacts, logs or prompts; use redacted names/references. For intended target environments require evidence for paths/case, permissions, static content/uploads, SQL and session/cache providers, authentication, TLS/certificates, native dependencies, containers, environment variables, health checks, startup/shutdown, publish output and process management. A Windows build or Kestrel start alone cannot establish Linux/container/cloud readiness.
+
+### Decisions and manual validation
+
+Infer a technical choice only when evidence establishes an effectively mandatory or sole supported path within approved requirements/scope, the choice is reversible, behavior and public contracts are unchanged and no data-loss or deployment-risk change occurs. Record decision, evidence and why alternatives do not apply as Agent-inferred, not user-approved. Do not ask MVC versus Razor Pages when only one practical supported option exists under these conditions. Ask when business behavior, public APIs/routes, schema changes, authentication continuity requirements, security policy, deployment topology, licensing, external contracts, data deletion/transformation, scope expansion or legacy retirement are affected. Inference never authorizes execution or bypasses fingerprint reapproval.
+
+Require a manual validation checklist in `UPGRADE_PLAN.md`, `UPGRADE_EXECUTION_LOG.md`, `UPGRADE_VALIDATION.md` and `REGRESSION_REPORT.md`. Each applicable item must include feature ID, exact URL/command/user action, required environment/data/credentials/service (names only), expected result, evidence to capture, pass/fail criteria, risk if it fails, responsible party and status. When automation, browser/runtime, data, credentials or services are unavailable, mark Not Tested, Partially Validated or Blocked; explain prerequisites and operational impact, and ask the user to perform safe checks where appropriate. No failure observed does not mean Passed. The executor records results in the log without changing the fingerprinted plan.
+
+### Progress metrics in workflow state
+
+Maintain these metrics in `UPGRADE_STATUS.md` at stage checkpoints and require matching definitions in `UPGRADE_EXECUTION_LOG.md`, `UPGRADE_VALIDATION.md` and `REGRESSION_REPORT.md`. Each must show numerator/denominator and percentage (`100 * numerator / denominator`), definition, exclusions and mutually exclusive status counts. Use stable IDs and the approved scope/baseline. Report 0/0 as N/A, never 100%, only when the inventory confirms no applicable items; if the denominator is unknown, report Unknown, not 0/0. If a partial inventory yields a denominator, label its percentage provisional and identify unknown scope. Exclude only documented out-of-scope or genuinely Not Applicable items, with counts and reasons. Unknown, blocked, failed and untested items remain in the denominator.
+
+1. Mandatory task completion: completed mandatory tasks / all in-scope mandatory tasks; report task statuses separately from validation.
+2. Feature migration coverage: implemented or approved replacement features / in-scope original features, including implemented but unvalidated.
+3. Feature validation coverage: fully validated features / in-scope original features.
+4. UI/page/component parity: fully validated UI surfaces and controls / in-scope inventoried UI surfaces and controls, counted as distinct stable IDs.
+5. API/contract coverage: fully validated API routes and external contract items / in-scope inventoried API routes and external contract items.
+6. Database/schema compatibility: fully validated schema and data compatibility items / in-scope inventoried schema and data compatibility items.
+7. Authentication/identity: fully validated identity continuity scenarios / in-scope applicable identity continuity scenarios.
+8. External integration coverage: fully validated integrations / in-scope inventoried integrations.
+9. Runtime/manual validation: fully validated runtime and manual checklist items / in-scope applicable runtime and manual checklist items.
+10. Deployment readiness: fully validated deployment requirements / in-scope applicable target-environment deployment requirements.
+11. Rollback readiness: fully validated rollback requirements / in-scope applicable rollback requirements.
+
+For coverage items report Fully validated, Implemented but unvalidated, Partially validated, Not tested, Blocked and Failed; list Not applicable separately with reasons. For a single status per item use Failed if a check failed; otherwise Blocked if a prerequisite prevents a required check; otherwise Fully validated if all required evidence passes; otherwise Partially validated if some evidence exists; otherwise Implemented but unvalidated if implemented; otherwise Not tested. Retain all evidence and blockers, so counts reconcile to the denominator. Count implemented features for migration coverage independently of validation status: an implemented feature can also be Blocked or Failed. Task completion is not validation coverage. Before independent validation clearly identify execution-reported evidence as provisional; after validation use independently verified counts without rewriting the validator's reports. Percentages are indicators, not success criteria: one missing critical workflow, security defect, data-loss risk or unverified mandatory integration prevents PASS or PASS WITH ISSUES.
+
+### Final quality and retirement gates
+
+Before calling the workflow complete, ensure no silent template replacement, no untracked missing page/control/asset, no unauthorized schema change or secret in artifacts, no feature passed solely on compilation, every unavailable validation has a manual checklist, every percentage has defined numerator/denominator and exclusions, deterministic choices were not needlessly blocked, Critical/High risks remain visible, and validation remains independent. Otherwise report BLOCKED or INCONCLUSIVE, not success.
+
+Do not delete or retire the legacy project until every original feature has a target outcome; every UI page/control/master/layout has a parity status; CSS/HTML/JS/assets have been compared; database/data and authentication continuity have been verified or explicitly accepted; integrations have been tested or manually validated; manual validation is complete or blocked items explicitly accepted; no Critical or High findings remain unresolved; rollback artifacts exist; and the user separately explicitly authorizes retirement. Accepted unknowns remain unverified and do not become PASS; retirement authorization is distinct from execution approval and production deployment approval.
+
+---
+
 # 2. Specialized Skills
 
 The following skills are mandatory dependencies.
@@ -464,7 +509,7 @@ Ensure the planner:
 
 The planning stage must involve the user whenever important information cannot be established from the repository.
 
-The planner must not silently assume business or architectural decisions.
+The planner must not silently assume business decisions or material architectural decisions. Record qualifying deterministic technical choices as Agent-inferred.
 
 Examples:
 
@@ -477,7 +522,7 @@ Examples:
 - Whether a legacy integration can be retired.
 - Whether an application can be split into multiple services.
 
-For every significant ambiguity:
+For every significant ambiguity that materially affects behavior, scope, deployment, contracts, data, licensing or security:
 
 1. Explain the existing implementation.
 2. Explain why it creates a migration challenge.
@@ -492,6 +537,7 @@ For every significant ambiguity:
 Group related questions to avoid overwhelming the user.
 
 Do not ask questions whose answers are already documented.
+Apply the deterministic decision inference conditions above before escalating a technical choice; record inferred decisions as such, never as user-approved.
 
 ## 7.3 Unresolved decisions
 

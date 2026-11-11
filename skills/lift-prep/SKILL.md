@@ -41,6 +41,46 @@ You must establish:
 
 ---
 
+## Mandatory preservation baseline and handoff
+
+The following requirements extend all phases and the required `UPGRADE_READINESS.md` structure. Inventory the entire original application, including excluded or retained components, and give every discovered feature, UI surface/control, route, integration, schema object, asset and lifecycle event a stable ID and an explicit investigation and migration outcome. Record unknown, inaccessible and unenumerated areas and their impact; never claim completeness from file enumeration alone. Use bounded batches and a coverage ledger for large repositories.
+
+Preserve evidence for business rules and workflows; public APIs, routes and protocols; existing schema and data; identity and session behavior; visual presentation and semantics; accessibility and responsiveness; error handling, logging, diagnostics and monitoring; background lifecycle; XML, JSON, Excel, PDF and other file formats; and hosting and deployment. Describe actual behavior, not just technology names. A successful build is not evidence that these work.
+
+### UI and asset inventory
+
+For every Web Forms, MVC, Razor, server-rendered and hybrid surface, enumerate every `.aspx`, `.ascx`, `.master`, `.cshtml`, `.vbhtml`, layout, partial, user control, shared component, route, static page and generated HTML surface. Associate related code-behind, designer files and controls without counting them as duplicate business features. For each surface record:
+
+- Stable ID, original file, route and aliases, target file and route if known (otherwise `Unknown / to be planned`), title and visible text; layout/master mapping, header, footer, navigation, menus, category controls, breadcrumbs and shared chrome.
+- Every button, link, input, label, table, grid, validation message, upload, download, dialog, error and empty state; visible placement and behavior, input names and form contracts.
+- HTML structure and semantic elements; CSS classes and selectors; CSS files, themes, bundle and minification configuration and load order; JavaScript libraries and order, AJAX, callbacks and client validation.
+- Fonts, icons, images, logos, favicons, source maps and other static assets; responsive breakpoints and mobile behavior, browser assumptions, accessibility and labels, and analytics, automation or integrations dependent on markup.
+- Web Forms ASPX, code-behind and designer, master/user controls, server controls, event handlers and Select/Insert/Update/Delete methods; ViewState, PostBack, hidden fields, session state, query parameters, generated URLs, authentication and role-based visibility.
+
+Inventory images, fonts, CSS, JavaScript, source maps, favicons, bundles, minified assets, resources and localization, generated designer files, static content, upload directories, email and document templates. Record path, reference, publish/build inclusion, consumer and outcome; distinguish intentional generated outputs from missing, renamed, orphaned or unintentionally replaced assets.
+
+Identify states, visual behavior, user interactions, dynamic routes, generated markup and runtime conditions that static inspection cannot establish. Capture a safe representative baseline when available, otherwise mark it unknown with prerequisites and manual validation needs. Do not require unavailable runtime access or infer an unobserved result.
+
+### Data, identity, configuration and runtime
+
+Inventory actual schema where safe read-only access is available, otherwise use mappings, scripts and other evidence and label the real schema unverified: tables, columns, types, nullability, keys, indexes, foreign keys, constraints, stored procedures, views, triggers, seed data, ORM mappings, identity/authentication and session/cache tables, serialized/persisted data and provider-specific behavior. Classify proposed operations as read-only compatibility, additive backward-compatible, destructive, irreversible or data transformation, and identify operations needing separate user approval. Never infer schema compatibility from names alone.
+
+Separately inventory password hashes, authentication cookies, sessions/cart, tokens, 2FA, external logins, roles/claims and password-reset mechanisms, including lifetimes, keys and dependencies. A usable legacy password hash does not prove that an existing authentication cookie, session or token remains usable.
+
+Compare configuration sources and precedence: `web.config`, `app.config`, appsettings, transforms, environment variables, Docker, launch settings, IIS, certificates, connection strings and external provider settings. Record names and redacted configuration references only, never credential values, private keys, tokens, connection-string secrets or sensitive data in reports, logs or prompts. Do not copy secrets to generated artifacts. If unavailable, identify the integration as Blocked or Not Tested, its operational impact and prerequisites; do not remove or disable it or invent credentials.
+
+Inventory cross-platform path and case assumptions, permissions, static content, uploads, SQL and session/cache providers, authentication, TLS/certificates, native dependencies, containers, environment variables, health checks, startup/shutdown, publish output and process management. A Windows build or local Kestrel start does not establish Linux, container or cloud compatibility.
+
+### Source-to-target traceability
+
+In the readiness report, seed a matrix with original file, class/method/control, feature ID, migration task, target file/class/page/service, validation evidence, current status and open findings. Include routes/query parameters, integrations, schema objects, assets and lifecycle events. Use `Not yet planned` or `Unknown` for future task/target/evidence; do not invent them. Explicitly connect Web Forms page, code-behind, designer, master, user and server controls, handlers, Select/Insert/Update/Delete, ViewState/PostBack and routes to the eventual Razor page/model/handler/service or other target, when known.
+
+The plan must extend this baseline; execution records actual results in its log without rewriting the approved plan, and independent validation compares both to original evidence. Never silently omit a discovered item.
+
+Identify legacy projects and dependencies whose retirement would affect these inventories. Record that retirement needs the later parity, data/identity, integration, manual-validation, risk and rollback gates and separate explicit user authorization; readiness does not authorize removal.
+
+---
+
 # 2. Core Principles
 
 Follow these principles throughout the assessment.
@@ -1467,7 +1507,7 @@ Examples:
 - Replacing a custom dependency injection mechanism.
 - Choosing incremental migration versus rewriting a major application component.
 
-These decisions should be investigated and presented to the user in Step 2.
+Step 2 must investigate them and consult the user only when the choice materially affects behavior, scope, deployment, contracts, data, licensing or security. A reversible, unambiguous supported replacement within approved requirements can be recorded as agent-inferred, not user-approved.
 
 ### Category C: Business or operational clarification required
 

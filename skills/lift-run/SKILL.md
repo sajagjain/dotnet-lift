@@ -40,6 +40,67 @@ You must work incrementally, follow the approved migration plan, and validate ev
 
 ---
 
+## Mandatory execution fidelity and evidence contract
+
+These requirements supplement, not replace, the authenticated plan approval and exact-byte fingerprint precheck. Execute only approved tasks in dependency order. Keep the approved `UPGRADE_PLAN.md` unchanged while recording live outcomes in `UPGRADE_EXECUTION_LOG.md`; any plan edit invalidates its fingerprint and requires the existing reapproval process. Preserve business rules, public routes/API and integration contracts, schema and data, identity, presentation, accessibility, diagnostics, background lifecycle, document formats and deployment behavior. Compilation or HTTP 200 alone never proves functional or UI parity.
+
+### UI, assets and traceability
+
+For each Web Forms, MVC, Razor, server-rendered or hybrid UI task, compare original and target using the plan's page/component parity and source-to-target matrices. A task is incomplete unless:
+
+- Every original control and visible function has a target; routes and aliases are preserved or their changes explicitly approved; master/shared layout, navigation and shared chrome are preserved.
+- CSS, scripts, bundles, fonts, images, icons, source maps and other assets are present and included in publish output; HTML semantics and selectors required by CSS, JavaScript, accessibility, automation and integrations are preserved.
+- Forms/input names, validation, navigation, buttons, tables, uploads/downloads, dialogs, error and empty states, visible text, placement and visual hierarchy and responsive behavior are preserved. Do not silently substitute the default framework template for the original visual system.
+- Source comparison or a safe manual check is recorded with evidence. Render and interactive checks remain separately required where the acceptance criteria demand them; unavailable checks are not passes.
+
+Record each page/component parity status as Planned, Implemented, Source-reviewed, Render-reviewed, Manually validated, Blocked or Intentionally changed with approval; keep evidence and functional validation status separate.
+
+Track original file and class/method/control, feature ID, migration task, target file/class/page/service, evidence, status and open findings in the execution log. Include every original page, control, route, integration, schema object, lifecycle event and asset; for Web Forms map ASPX, code-behind, designer, master, user/server controls, event and Select/Insert/Update/Delete handlers, ViewState/PostBack, routes and query parameters to target page/model/handler/service or other target. Unknown or absent targets remain visible. Detect missing, renamed, orphaned or unintentionally replaced images, fonts, CSS/JS, source maps, favicons, bundles/minified assets, resources/localization, designers, static content, upload directories, email and document templates.
+
+### Database, identity and sensitive configuration
+
+Never infer schema compatibility from matching class/property names. Obtain separate explicit user authorization for each schema change, even for additive changes, in addition to the overall plan approval. Destructive operations, data deletion and irreversible transformations require their own specific authorization and the existing higher-impact gates.
+
+Before any approved schema change, verify actual connectivity, inspect the real schema and confirm the target database/environment; preserve data, confirm backup and rollback feasibility, and record redacted before/after schema, row counts and integrity evidence. Use guarded, idempotent additive changes where approved and appropriate; avoid drop/recreate and destructive seed initializers. If any prerequisite is unavailable, block the operation rather than guessing or using a different database. Preserve ORM/identity/session/cache mappings, existing data, password hashes, token compatibility, query semantics, decimals, dates, nulls and identifiers.
+
+Record separate results for password hashes, authentication cookies, sessions/cart, tokens, 2FA, external logins, roles/claims and password reset. Verify or provide manual validation for existing-user login, registration, logout, password change/reset, lockout, 2FA, phone/email verification, external login, role authorization, cookie persistence and session/cart continuity. A valid legacy password hash alone proves none of the other continuity properties.
+
+Compare `web.config`, `app.config`, appsettings, transforms, environment variables, Docker, launch settings, IIS, certificates, connection strings and external provider settings. Never copy credentials, private keys, tokens or secrets into source, documentation, plans, execution/validation logs or prompts; use redacted setting references. Missing credentials/services mean Blocked or Not Tested, impact and a manual checklist, not fake credentials, silent disabling, removal or success-shaped defaults.
+
+Verify cross-platform paths and case sensitivity, permissions, static content/uploads, SQL and session/cache providers, authentication, TLS/certificates, native dependencies, containers, environment variables, health checks, startup/shutdown, publish output and process management in each intended environment. A Windows build or local Kestrel start is not Linux/container/cloud evidence.
+
+### Manual validation and safe decisions
+
+In a `Manual Validation Checklist` section of `UPGRADE_EXECUTION_LOG.md`, carry forward each applicable plan manual validation item and update it with feature ID, exact URL/command/user action, required environment/data/credentials/service (names only), expected result, evidence to capture, pass/fail criteria, risk if it fails, responsible party and status. For unavailable automation, browser/runtime, credentials or services mark Not Tested, Partially Validated or Blocked, explain the prerequisite and operational impact, and ask the user to perform safe checks when appropriate. Do not treat lack of a failure as a pass. A mandatory task whose acceptance criteria are unverified remains REQUIRES_REVIEW or BLOCKED.
+
+Infer a technical choice only when the approved scope authorizes it, evidence establishes an effectively mandatory or sole supported path, it is reversible, behavior and public contracts are unchanged and there is no data-loss or deployment-risk change. Log the decision, evidence and why alternatives do not apply as Agent-inferred, never user-approved. Otherwise consult the user for business behavior, public API/routes, schema changes, authentication continuity requirements, security policy, deployment topology, licensing, external contracts, data deletion/transformation, scope expansion or retirement. Any plan change still requires fingerprint reapproval.
+
+### Progress metrics
+
+In `UPGRADE_EXECUTION_LOG.md`, report each metric as numerator/denominator and percentage (`100 * numerator / denominator`), its definition, exclusions and mutually exclusive status counts. Use stable IDs and the approved scope/baseline. Report 0/0 as N/A, never 100%, only when the inventory confirms no applicable items; if the denominator is unknown, report Unknown, not 0/0. If a partial inventory yields a denominator, label its percentage provisional and identify unknown scope. Exclude only documented out-of-scope or genuinely Not Applicable items, with counts and reasons. Unknown, blocked, failed and untested items remain in the denominator.
+
+Use these denominators and numerators:
+
+1. Mandatory task completion: completed mandatory tasks / all in-scope mandatory tasks; report task statuses separately from validation.
+2. Feature migration coverage: implemented or approved replacement features / in-scope original features, including implemented but unvalidated.
+3. Feature validation coverage: fully validated features / in-scope original features.
+4. UI/page/component parity: fully validated UI surfaces and controls / in-scope inventoried UI surfaces and controls, counted as distinct stable IDs.
+5. API/contract coverage: fully validated API routes and external contract items / in-scope inventoried API routes and external contract items.
+6. Database/schema compatibility: fully validated schema and data compatibility items / in-scope inventoried schema and data compatibility items.
+7. Authentication/identity: fully validated identity continuity scenarios / in-scope applicable identity continuity scenarios.
+8. External integration coverage: fully validated integrations / in-scope inventoried integrations.
+9. Runtime/manual validation: fully validated runtime and manual checklist items / in-scope applicable runtime and manual checklist items.
+10. Deployment readiness: fully validated deployment requirements / in-scope applicable target-environment deployment requirements.
+11. Rollback readiness: fully validated rollback requirements / in-scope applicable rollback requirements.
+
+For coverage items report Fully validated, Implemented but unvalidated, Partially validated, Not tested, Blocked and Failed; list Not applicable separately with reasons. For a single status per item use Failed if a check failed; otherwise Blocked if a prerequisite prevents a required check; otherwise Fully validated if all required evidence passes; otherwise Partially validated if some evidence exists; otherwise Implemented but unvalidated if implemented; otherwise Not tested. Retain all evidence and blockers, so counts reconcile to the denominator. Count implemented features for migration coverage independently of validation status: an implemented feature can also be Blocked or Failed. Task completion is not validation coverage. Percentages are indicators, not success criteria: one missing critical workflow, security defect, data-loss risk or unverified mandatory integration prevents PASS.
+
+### Legacy retirement
+
+Never delete or retire the legacy project based on general migration approval. First require a target outcome for every original feature; parity status for every UI page/control/master/layout; comparison of CSS/HTML/JS/assets; verified or explicitly accepted database/data and authentication continuity; tested or manually validated integrations; completed manual checklists or explicit acceptance of blocked items; no unresolved Critical or High findings; existing rollback artifacts; and separate explicit user authorization for retirement. Accepted limitations remain unverified and do not become PASS. If independent validation has not occurred, preserve the legacy project and hand off; do not invoke the validator yourself.
+
+---
+
 # 2. Mandatory Input Documents
 
 Before beginning migration, read the following documents completely:
@@ -280,7 +341,8 @@ Overall migration approval does not automatically authorize:
 - Dropping or recreating database objects.
 - Deleting persisted data.
 - Breaking external API contracts.
-- Removing legacy applications.
+- Removing or retiring legacy applications or projects.
+- Any database schema change, including an additive change.
 - Removing existing business features.
 - Irreversible data transformations.
 - Modifying production infrastructure.
@@ -854,7 +916,7 @@ Preserve existing business rules and user workflows.
 
 Do not delete old pages simply because their new implementations exist.
 
-Remove or retire legacy components only when the approved migration plan explicitly authorizes it and replacement functionality is validated.
+Remove or retire legacy components only when the separate retirement safeguards above are satisfied and the user has separately authorized retirement.
 
 ## 10.3 Request pipeline migration
 
@@ -1863,11 +1925,9 @@ Update only after explicit user authorization.
 
 Actual migration changes, tasks, build results, test results, and outstanding issues.
 
-### 5. UPGRADE_VALIDATION.md
+### 5. Independent validation handoff
 
-Technical validation findings and unresolved compatibility concerns.
-
-Provide the information needed by the independent validation skill.
+Provide the information needed by `lift-check` in the execution log. Do not create or update `UPGRADE_VALIDATION.md` or `REGRESSION_REPORT.md`; they are the independent validator's deliverables in the user-initiated fresh session.
 
 ### 6. Application source code
 
