@@ -106,6 +106,8 @@ Then open the target .NET repository in your agent and invoke the desired skill 
 
 The orchestrator also tracks workflow state in `UPGRADE_STATUS.md`. Skills are designed to preserve existing functionality and to surface assumptions, risks, unavailable dependencies, and decisions that need human input.
 
+The workflow tracks source-to-target feature and UI parity, database and identity continuity, manual checks for unavailable environments, and evidence-based progress metrics. Schema changes require separate authorization. Legacy retirement requires its own safeguards and explicit user approval; independent validation remains a user-initiated step in a fresh session.
+
 ## Requirements and limitations
 
 - These skills provide instructions to an AI agent; they do not themselves install .NET SDKs, execute migrations, or guarantee a successful result.
@@ -120,3 +122,63 @@ Issues and pull requests are welcome. Keep skill names short, ensure each direct
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
+
+## Update or uninstall
+
+Use the instructions for the way you installed Dotnet Lift. If you installed it in more than one way, manage each installation separately. Updates may overwrite local changes to skill files, so back up any edits you want to keep first.
+
+### Installed with `npx skills`
+
+Open a terminal in the .NET project where you installed the skills. To update just the five Dotnet Lift skills in that project:
+
+```sh
+npx skills update -p lift-flow lift-prep lift-plan lift-run lift-check
+```
+
+To uninstall them from the project:
+
+```sh
+npx skills remove lift-flow lift-prep lift-plan lift-run lift-check
+```
+
+Follow the prompts and check the selected agents and skills before confirming. To manage a global installation instead, replace `-p` with `-g` for the update command, or add `-g` to the remove command. Use `npx skills list` for project skills or `npx skills list -g` for global skills.
+
+### Installed as a Claude Code plugin
+
+In a terminal, refresh the marketplace and update the plugin:
+
+```sh
+claude plugin marketplace update dotnet-lift-marketplace
+claude plugin update dotnet-lift@dotnet-lift-marketplace
+```
+
+To uninstall:
+
+```sh
+claude plugin uninstall dotnet-lift@dotnet-lift-marketplace
+```
+
+The uninstall command defaults to user scope. If you installed it for a project or locally, run it from that project and add `--scope project` or `--scope local`. Uninstalling from the last scope also removes the plugin's stored options and data; add `--keep-data` to preserve its data directory. Use `claude plugin list` to check the installed scope. In an open Claude Code session, run `/reload-plugins` or start a new session to apply changes.
+
+### Installed as a GitHub Copilot CLI plugin
+
+In a terminal, refresh the marketplace and update the plugin:
+
+```sh
+copilot plugin marketplace update dotnet-lift-skills
+copilot plugin update dotnet-lift@dotnet-lift-skills
+```
+
+To uninstall:
+
+```sh
+copilot plugin uninstall dotnet-lift@dotnet-lift-skills
+```
+
+Use `copilot plugin list` to check installed plugins, then start a new session to load changes. Plugin updates depend on a newer version being published in the marketplace.
+
+### Copied manually
+
+To update, download the latest repository and replace only the Dotnet Lift skill folders you originally copied into your agent's project skills directory. Compare and preserve any local edits first.
+
+To uninstall, remove only the copied `lift-flow`, `lift-prep`, `lift-plan`, `lift-run`, and `lift-check` folders from that directory. Do not remove the entire skills directory if it contains other skills. Restart your agent session afterward.
