@@ -1,0 +1,20 @@
+{
+  "name": "dotnet-lift-skills",
+  "owner": {
+    "name": "Dotnet Lift Skills contributors"
+  },
+  "metadata": {
+    "description": "Installable GitHub Copilot plugins for Dotnet Lift.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "dotnet-lift",
+      "description": "A five-skill workflow for assessing, planning, executing, and independently validating .NET upgrades.",
+      "version": "0.1.0",
+      "repository": "https://github.com/sajagjain/dotnet-lift",
+      "homepage": "https://github.com/sajagjain/dotnet-lift",
+      "source": "./"
+    }
+  ]
+}

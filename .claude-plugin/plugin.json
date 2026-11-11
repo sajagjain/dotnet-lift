@@ -1,0 +1,11 @@
+{
+  "name": "dotnet-lift",
+  "version": "0.1.0",
+  "description": "A five-skill workflow for assessing, planning, executing, and independently validating .NET upgrades.",
+  "repository": "https://github.com/sajagjain/dotnet-lift",
+  "homepage": "https://github.com/sajagjain/dotnet-lift",
+  "author": {
+    "name": "Dotnet Lift Skills contributors"
+  },
+  "license": "MIT"
+}
