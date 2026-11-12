@@ -45,6 +45,20 @@ You must establish:
 
 The following requirements extend all phases and the required `UPGRADE_READINESS.md` structure. Inventory the entire original application, including excluded or retained components, and give every discovered feature, UI surface/control, route, integration, schema object, asset and lifecycle event a stable ID and an explicit investigation and migration outcome. Record unknown, inaccessible and unenumerated areas and their impact; never claim completeness from file enumeration alone. Use bounded batches and a coverage ledger for large repositories.
 
+### Persistent coverage and bounded discovery
+
+Create or resume `UPGRADE_COVERAGE.md` alongside `UPGRADE_READINESS.md`. It is the detailed discovery ledger, not proof of behavioral correctness. Use subagents by default when the platform and permissions allow. The coordinator may work directly only when it records evidence that the full relevant scope and dependencies fit safely in the available context without sacrificing verification, or when subagents are unavailable, prohibited or fail. For a fit decision record inventory size, estimated relevant input, available context and allowance for tools, output and verification; estimates do not prove completeness. Record the reason and any impact; in the latter case use bounded sequential batches and fresh sessions when possible, not a claim that subagents ran.
+
+1. Establish a reproducible original baseline before migration: record repository root, source revision where available, dirty/untracked state without secret values, enumeration method, time, scope and limitations. Enumerate tracked and relevant untracked files, solutions, projects, project references and actual filesystem entries; Git's tracked-file list alone is insufficient. Explicitly account for ignored content that may be needed, submodules, links, inaccessible paths, generated/build outputs and external content. Do not follow links outside authorized scope or read secrets. Record exclusions by path/category and reason, including intentionally excluded generated/dependency artifacts and migration-generated reports; do not silently assume all ignored files are irrelevant. A revision alone does not capture dirty or untracked source: record a safe, accessible original reference for those files or mark their original evidence unavailable. Do not commit or overwrite user changes to establish a baseline.
+2. Record a stable ID, original path, owning project or shared ownership, category, baseline reference or safe fingerprint where appropriate, batch ID, discovery status, evidence/inspected scope, linked feature IDs, dependencies, findings and exclusion or blocker reason for each enumerated file. Use PENDING, ASSIGNED, PARTIALLY_REVIEWED, REVIEWED, EXCLUDED and BLOCKED; REVIEWED requires recorded inspection appropriate to that file type, not mere listing or a worker claim. Binary assets may be inventoried and checked through metadata, references and publish inclusion rather than read as text. Track project/feature and runtime-unknown coverage separately from file status.
+3. Assign bounded, non-overlapping project or folder batches to fresh read-only discovery subagents where supported. Include the relevant solution/project graph, shared configuration, entry points and neighboring dependencies; ask workers to trace across batch boundaries, identify other owners and report missing context instead of guessing. Partition further when a batch or its dependencies cannot fit safely; do not force a file count or treat an arbitrary token estimate as proof of comprehension. Workers return assigned and actually inspected IDs, source references, features and behavior, dependencies, unresolved paths, risks and blockers; no worker changes application code or the shared ledger.
+4. The coordinator reviews each result against source evidence, merges findings and cross-project relationships, updates current ledger state and appends a dated batch event with completed and remaining work. Reassign omitted, failed, conflicting or incomplete work; mark inaccessible or unverified items BLOCKED or PARTIALLY_REVIEWED. Trace shared layouts, routes, JavaScript/assets, class libraries, runtime registration, jobs and lifecycle across batches. Preserve unknown dynamic behavior and external systems explicitly.
+5. Re-enumerate against the original baseline before readiness handoff and after interruption: reconcile path sets and safe fingerprints, detect added, changed, renamed or removed files, and return affected files and dependent findings to review. Record inaccessible and unenumerated scope and why; never claim complete enumeration if the scan failed. Preserve the baseline reference for independent validation, without copying credentials, sensitive data or secret-bearing file contents into artifacts. If it cannot be preserved, record the limitation.
+
+When fresh subagents are available, use at least one read-only fresh-context reviewer to challenge the assembled readiness findings and ledger against the original source and project graph, without relying on the discovery conversation. Give it the inventory, relevant source and evidence; partition review into bounded slices if needed and reconcile cross-slice findings. Require it to report missed files, behaviors, boundary connections and ambiguities. Investigate findings, update the ledger and repeat focused review after material corrections, or record unresolved items and their impact. A fresh reviewer is not a substitute for runtime tests or independent `lift-check`.
+
+The ledger contains a current inventory and an append-only event history, with batch/worker ID, assigned and reviewed counts, outstanding IDs, evidence, blockers and next action. Counts must reconcile to enumerated IDs by status; report unknown scope separately. The coordinator alone reconciles and writes it; workers return results, not simultaneous shared-file edits. Checkpoint after each batch, preserve previous findings and resume from the last verified event; an interrupted ASSIGNED batch remains unfinished until reconciled or reassigned. Count only actually reviewed items as reviewed; exclusions and blocked items remain explicit. Enumeration completeness is distinct from behavior and runtime validation.
+
 Preserve evidence for business rules and workflows; public APIs, routes and protocols; existing schema and data; identity and session behavior; visual presentation and semantics; accessibility and responsiveness; error handling, logging, diagnostics and monitoring; background lifecycle; XML, JSON, Excel, PDF and other file formats; and hosting and deployment. Describe actual behavior, not just technology names. A successful build is not evidence that these work.
 
 ### UI and asset inventory
@@ -1892,6 +1906,7 @@ This skill is strictly read-only with respect to application code.
 - Run safe, non-mutating inspection commands.
 - Review official framework documentation.
 - Generate or update UPGRADE_READINESS.md.
+- Generate or update UPGRADE_COVERAGE.md as the discovery ledger.
 
 ## Not Allowed
 
@@ -1910,6 +1925,8 @@ This skill is strictly read-only with respect to application code.
 Only create or update:
 
 `UPGRADE_READINESS.md`
+
+`UPGRADE_COVERAGE.md`
 
 If the document already exists, inspect it before updating and preserve valuable existing findings.
 
@@ -1997,7 +2014,7 @@ Before completing the task, verify:
 - No application source code was modified.
 - No project configuration was changed.
 - No packages were upgraded.
-- Only the readiness documentation was created or updated.
+- Only the readiness documentation and coverage ledger were created or updated.
 
 ---
 

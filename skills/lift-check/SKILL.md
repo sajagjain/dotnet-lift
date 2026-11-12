@@ -54,6 +54,14 @@ A migration is successful only when its technical compatibility and existing app
 
 Independently compare original source/baseline, approved plan and actual target; do not treat executor statuses, compilation or HTTP 200 as proof of preservation. Account for all original features, pages/controls/routes, integrations, schema objects, assets and lifecycle events, including retained/excluded items with explicit outcomes. Preserve business rules, API/protocol contracts, data, identity, presentation, accessibility, diagnostics, background lifecycle, document formats and deployment behavior. Do not change application code or perform destructive tests.
 
+### Independent coverage and bounded review
+
+Use `UPGRADE_COVERAGE.md` as a reference, not proof. Independently reconcile its original file inventory, exclusions, blockers, batches, source baseline and task handoffs with available original source and actual target. Identify omitted, stale, changed or inaccessible files, cross-project dependencies and missing evidence in both reports. If the baseline or ledger is absent, reconstruct what can be verified read-only; mark the remainder Not Tested, Partially Validated or Blocked with impact and manual actions. Do not modify the ledger, readiness report, plan, approval, execution log or application.
+
+Use fresh read-only subagents by default when available and permitted, within this user-initiated validation session. Divide original/target comparison into bounded project or feature slices with related shared layouts, assets, callers, class libraries, hosting and background-job dependencies; reconcile boundaries centrally. Give reviewers the relevant approved requirements and original/target evidence, not the executor's conversation or conclusions as truth. Require file/feature IDs actually checked, independent evidence, unverified items and findings. Review their results against source, reconcile omissions and conflicting findings, and repeat focused checks as needed.
+
+Direct review is permitted only with recorded evidence that the full relevant validation scope and dependencies fit safely in context without losing verification, not merely that one review slice fits, or if delegation is unavailable, prohibited or fails. For a fit decision record inventory size, estimated relevant input, available context and allowance for tools, output and verification; estimates do not prove completeness. In the latter case use bounded sequential reviews, disclose the limitation and never claim a fresh subagent ran. Subagent use is not independent validation unless performed in this separate user-initiated session; no worker may implement fixes or perform destructive tests.
+
 ### Source-to-target and UI parity
 
 Reconstruct and verify the source-to-target matrix: original file, class/method/control, feature ID, migration task, target file/class/page/service, independently obtained validation evidence, current status and open findings. For Web Forms include ASPX, code-behind, designer, master, user/server controls, event handlers, Select/Insert/Update/Delete methods, ViewState/PostBack, routes and query parameters, and the target Razor page/model/handler/service or other target. Unknown or missing targets remain visible.
@@ -200,7 +208,7 @@ A separate executor run should implement approved corrections.
 
 # 3. Mandatory Input Documents
 
-Before beginning validation, read the following documents completely.
+Before beginning validation, account for the complete contents of the following documents in bounded sections and recorded handoffs when necessary; also inspect UPGRADE_COVERAGE.md and its original baseline when available.
 
 ## 3.1 UPGRADE_READINESS.md
 
@@ -1888,6 +1896,7 @@ This skill is read-only with respect to application implementation.
 - Read UPGRADE_PLAN.md.
 - Read UPGRADE_APPROVAL.md.
 - Read UPGRADE_EXECUTION_LOG.md.
+- Read UPGRADE_COVERAGE.md when available.
 - Inspect actual application source code.
 - Inspect project configurations.
 - Inspect package references.

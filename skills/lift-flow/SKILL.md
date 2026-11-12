@@ -48,6 +48,18 @@ Step 4 must remain a separate user-initiated activity.
 
 The child skills remain authoritative for their stage and their read-only or approval restrictions. Verify the following at each handoff; do not treat document length, compilation or HTTP 200 as evidence of behavioral or presentation parity. Preserve business rules and workflows, public APIs/routes, database schema/data, authentication and identity continuity, external protocols, UI presentation/semantics/assets/accessibility/responsiveness, diagnostics and error handling, background lifecycle, file formats and deployment behavior. No feature, page/control/route, integration, schema object, asset or lifecycle event may disappear without an explicit status.
 
+### Coordinator, coverage and fresh-context workers
+
+Use an Elephant-Goldfish-inspired division of responsibility without requiring an external plugin: the coordinator maintains decisions and persistent state; bounded workers inspect or implement; fresh read-only reviewers challenge findings without the author's conversation. The coordinator's memory is not unlimited and worker summaries are not proof. Read relevant original source and reconcile evidence and cross-project relationships.
+
+Use subagents by default in preparation, planning and execution when the platform supports and permits them. Delegate stages or bounded tasks through the platform's actual capabilities; if a delegated stage cannot spawn its own workers, the parent coordinates its bounded workers instead. The coordinator may work directly only when it records evidence that the full relevant stage scope and dependencies fit safely in available context without losing verification: include inventory size, estimated relevant input, available context and allowance for tools, output and verification. Estimates are not proof of completeness; batch or delegate if uncertain. If subagents are unavailable, prohibited or fail, record that fact and impact, use bounded sequential batches and fresh sessions where possible, and never pretend delegation occurred. No delegation overrides stage restrictions, permissions, approval or dependency ordering.
+
+Require `lift-prep` to create `UPGRADE_COVERAGE.md` with a reproducible original file/project inventory, stable IDs, explicit reviewed/pending/partial/excluded/blocked states, evidence and append-only batch checkpoints. Reconcile enumerated tracked, relevant untracked and ignored paths, dependencies and unknowns before readiness handoff and on resume; a file listing is not behavioral coverage. Preserve a safe original baseline reference, record inaccessible scope, and do not copy secrets. Require a fresh read-only readiness/plan challenge when available, with findings reconciled before approval; this is not final validation.
+
+One designated coordinator at a time reconciles worker outputs and updates shared state; when a stage is delegated, agree which coordinator owns each artifact before dispatch. `UPGRADE_STATUS.md` is authoritative for stage state, `UPGRADE_COVERAGE.md` for original discovery coverage and checkpoint references, and `UPGRADE_EXECUTION_LOG.md` for execution task state and evidence. Append task checkpoint references to the coverage ledger without modifying its original baseline or the fingerprinted plan. Serialize shared-state writes; follow approved execution restrictions, and only parallelize where the plan permits non-conflicting edits, completed dependencies and isolated validation. Resume by checking actual repository changes and artifacts, approved plan fingerprint and evidence; unexplained drift or changed scope requires investigation and reapproval where applicable.
+
+### Stage handoffs
+
 1. **Readiness:** require a repository-wide baseline with stable feature and inventory IDs, exhaustive discovered Web Forms/MVC/Razor/server-rendered/hybrid surfaces, controls, routes, shared components, assets and UI states, plus database/schema, identity/session, configuration, integration and target-environment inventories. Unknown or inaccessible areas, runtime-only UI behavior and incomplete enumeration must be explicit. Preserve original source evidence for comparison; do not demand an invented target during discovery.
 2. **Planning:** require a source-to-target matrix linking original file/class/method/control and feature to task, target, evidence, status and findings; Web Forms mappings must cover page, code-behind, designer, master, user/server controls, handlers, Select/Insert/Update/Delete, ViewState/PostBack, routes/query parameters and target page/model/handler/service. Require the page/component parity statuses Planned, Implemented, Source-reviewed, Render-reviewed, Manually validated, Blocked and Intentionally changed with approval, with evidence separate from validation. Ensure tasks explicitly preserve visual system, layouts, navigation, HTML/CSS/JS and selectors, form/validation, responsive/accessibility behavior and assets; prohibit unapproved starter-template replacement. Require database/ORM/identity/session mappings, retention, integrity/row-count checks, safe rollout, backup, rollback limits, manual SQL and separate authorization for every schema change.
 3. **Execution:** confirm the exact-byte plan fingerprint and independent approval precheck remain valid. Track per-task evidence and actual source-to-target outcomes in the execution log, not by modifying the approved plan. Require recorded source comparison or safe manual check and all UI task acceptance criteria, preserve routes and assets, and prevent any schema change without its separate explicit authorization. Before approved schema changes require real connectivity/schema and target environment checks, backup and before/after evidence; avoid destructive seed and drop/recreate behavior. Missing credentials/services must be Blocked or Not Tested, never silently disabled or replaced with fake credentials.
@@ -102,6 +114,7 @@ Analyze the existing application and document its architecture, features, depend
 Expected output:
 
 UPGRADE_READINESS.md
+UPGRADE_COVERAGE.md
 
 ## Step 2: lift-plan
 
@@ -185,7 +198,7 @@ Load the instructions for each skill using the capabilities supported by the cur
 
 If the platform supports native skill invocation, use it.
 
-If the platform supports subagents, delegate the relevant stages to the appropriate specialized agent.
+If the platform supports and permits subagents, delegate the relevant stages or bounded work to appropriate workers by default, subject to the coordinator and fallback rules above.
 
 If neither is available, read the child SKILL.md instructions and follow them directly.
 
@@ -247,6 +260,7 @@ Step 4 Validation: NOT_STARTED
 ## Generated Artifacts
 
 - UPGRADE_READINESS.md:
+- UPGRADE_COVERAGE.md:
 - UPGRADE_PLAN.md:
 - UPGRADE_APPROVAL.md:
 - UPGRADE_EXECUTION_LOG.md:
@@ -354,6 +368,7 @@ The planner should investigate these considerations in detail.
 Before creating new documents, inspect whether any of the following already exist:
 
 - UPGRADE_READINESS.md
+- UPGRADE_COVERAGE.md
 - UPGRADE_PLAN.md
 - UPGRADE_APPROVAL.md
 - UPGRADE_EXECUTION_LOG.md
@@ -441,6 +456,7 @@ Before proceeding:
 6. Check that unknowns and assumptions are explicitly documented.
 7. Check that risks are recorded.
 8. Check that incomplete discovery is disclosed.
+9. Verify UPGRADE_COVERAGE.md exists, its batch results and file statuses reconcile with the original inventory, source drift and blocked scope are recorded, and fresh review or its limitation is documented.
 
 Do not assume that a long document is a complete document.
 
@@ -456,6 +472,7 @@ Once verified:
 - Record the artifact location.
 - Update UPGRADE_STATUS.md.
 - Pass UPGRADE_READINESS.md to Step 2.
+- Pass UPGRADE_COVERAGE.md and its original baseline reference to Step 2.
 
 Present a concise readiness summary to the user.
 
@@ -812,6 +829,7 @@ The validator must independently inspect the actual application rather than inhe
 Before concluding Step 3, ensure the following documents exist:
 
 - UPGRADE_READINESS.md
+- UPGRADE_COVERAGE.md
 - UPGRADE_PLAN.md
 - UPGRADE_APPROVAL.md
 - UPGRADE_EXECUTION_LOG.md
@@ -857,6 +875,7 @@ Invoke the lift-check skill and follow its complete SKILL.md instructions.
 Read the following documents:
 
 - UPGRADE_READINESS.md
+- UPGRADE_COVERAGE.md
 - UPGRADE_PLAN.md
 - UPGRADE_APPROVAL.md
 - UPGRADE_EXECUTION_LOG.md
@@ -905,6 +924,7 @@ The orchestrator must support interrupted workflows.
 When invoked again, inspect:
 
 - UPGRADE_STATUS.md
+- UPGRADE_COVERAGE.md
 - UPGRADE_READINESS.md
 - UPGRADE_PLAN.md
 - UPGRADE_APPROVAL.md

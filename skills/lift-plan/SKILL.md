@@ -50,6 +50,16 @@ The migration plan must answer:
 
 Extend `UPGRADE_PLAN.md` with the following matrices, concrete dependency-ordered tasks, evidence requirements and manual checklist. Apply them to every in-scope legacy .NET Framework, MVC, Web Forms, Razor, server-rendered, hybrid, API, service, database, integration and document-processing component. Account for retained and excluded original items with an explicit outcome; do not silently drop a feature, UI control, route, integration, schema object, asset or lifecycle event. Preserve business rules, public routes and contracts, existing data, identity, presentation, accessibility, diagnostics, background lifecycle, file formats and deployment behavior. Compilation is not functional verification.
 
+### Bounded planning and fresh review
+
+Use `UPGRADE_COVERAGE.md` with the readiness report as the discovery baseline. Reconcile its pending, excluded, blocked and changed items and cross-project dependencies with the plan; an inventoried file is not evidence that its behavior was understood. If the ledger is absent or stale, do not invent coverage: request a separate `lift-prep` readiness reconciliation, preserve the missing evidence and block affected decisions or tasks until their prerequisites are resolved. Do not write readiness artifacts within this planning skill. Existing incomplete scope remains visible.
+
+Use subagents by default when supported and permitted. The coordinator may proceed directly only when it records why all relevant scope and dependencies fit safely in context without losing verification, including inventory size, estimated relevant input, available context and allowance for tools, output and verification, or if subagents are unavailable, prohibited or fail; use bounded sequential analysis and record the limitation in the latter case. Estimates do not prove completeness. Delegate independent read-only planning investigations by project or feature boundary, supplying source references, linked readiness findings, shared dependencies and required output. Workers return evidence, unresolved questions and proposed tasks; the coordinator reconciles results and owns the plan.
+
+Define bounded tasks with stable IDs, owning project and affected files/features, original evidence, relevant shared layouts, assets, callers, class libraries and runtime/lifecycle dependencies, prerequisites, approved scope, acceptance criteria, tests, rollback and exclusive write boundaries. Trace background-job scheduling, registration, triggers, concurrency, retries, shutdown and deployment behavior across projects. Sequence shared dependencies and coupled changes; implementation follows the one-task-at-a-time restriction below. Independent read-only investigations may run in parallel.
+
+Before requesting final approval, have a fresh read-only reviewer, when available, challenge the plan and coverage ledger against original source and dependencies without relying on the author's conversation. Review completeness, UI/backend/lifecycle parity, task boundaries, approvals and testability; reconcile and resolve findings, re-review material revisions or record blockers and their impact. If no fresh reviewer is available, document that limitation and perform a bounded source-based self-review. This review does not approve the plan, authorize migration or replace the separate final `lift-check`.
+
 ### Source-to-target and UI parity matrices
 
 Extend the readiness traceability matrix with original file, class/method/control, feature ID, migration task ID, target file/class/page/service, validation evidence, current status and open findings. Include each page, shared component, control, route/alias, integration, schema object, asset and lifecycle event. For Web Forms explicitly map ASPX, code-behind, designer, master, user and server controls, event handlers, Select/Insert/Update/Delete methods, ViewState/PostBack, routes and query parameters to the target Razor page/model/handler/service or other chosen implementation. Mark unknown targets and evidence as unknown, not invented.
@@ -90,7 +100,7 @@ The primary input is:
 
 `UPGRADE_READINESS.md`
 
-Read the complete document before beginning the planning exercise.
+Also use `UPGRADE_COVERAGE.md`. Review the complete readiness baseline and coverage in bounded sections, recording what was reviewed; use indexed retrieval and worker results when the full material cannot fit in one context. Do not claim complete review until every section and its cross-project relationships have been accounted for.
 
 The readiness document contains the existing application's architectural knowledge, feature inventory, dependencies, technical risks, and unresolved questions.
 

@@ -44,6 +44,18 @@ You must work incrementally, follow the approved migration plan, and validate ev
 
 These requirements supplement, not replace, the authenticated plan approval and exact-byte fingerprint precheck. Execute only approved tasks in dependency order. Keep the approved `UPGRADE_PLAN.md` unchanged while recording live outcomes in `UPGRADE_EXECUTION_LOG.md`; any plan edit invalidates its fingerprint and requires the existing reapproval process. Preserve business rules, public routes/API and integration contracts, schema and data, identity, presentation, accessibility, diagnostics, background lifecycle, document formats and deployment behavior. Compilation or HTTP 200 alone never proves functional or UI parity.
 
+### Bounded workers, feedback and recovery
+
+Use subagents by default for approved bounded tasks when available and permitted. The coordinator may work directly only when it records evidence that the full relevant stage scope and its dependencies fit safely in context without losing verification, not merely that the next small task fits, or when delegation is unavailable, prohibited or fails. For a fit decision record inventory size, estimated relevant input, available context and allowance for tools, output and verification; estimates do not prove completeness. In the latter case, document the limitation and use bounded sequential work and fresh sessions where possible. Do not claim delegation occurred when it did not.
+
+Before dispatch, verify the existing approval and exact plan fingerprint, task eligibility and all separate authorizations. Supply each worker the approved task ID, scope and write boundaries, original baseline and relevant `UPGRADE_COVERAGE.md` entries, source/target paths, dependent projects, shared layouts/assets, contracts, relevant decisions, acceptance criteria, required tests, safety and rollback constraints. The worker must load the applicable `lift-run` instructions and may inspect additional dependencies; it must report missing context or required scope changes rather than guess or exceed approval. UI tasks include related layout, controls, CSS/JS and publish paths; backend tasks include callers, libraries, hosting and job registration, scheduling, retries, concurrency and shutdown.
+
+The worker returns changed files, mapped feature/asset IDs, source comparisons, build/test and behavioral evidence, failed or unavailable checks, unresolved dependencies and proposed status. The coordinator reviews results against actual source and acceptance criteria, verifies relevant project and dependent builds/tests, and reconciles every assigned ID. Correct failures within approved scope and rerun checks; leave unavailable checks unverified or blocked. Stop dependent tasks on failure; an agent's summary, compilation or an HTTP 200 is not behavioral proof. Where feasible, use a fresh read-only reviewer for high-risk or cross-boundary changes; its review supplements, never replaces, the user-initiated independent final validation.
+
+Only the designated coordinator updates `UPGRADE_EXECUTION_LOG.md` and the ledger. Record per-task outcomes and remaining work in the execution log as the authoritative task state; append a dated task checkpoint to `UPGRADE_COVERAGE.md` referencing task ID, actual affected inventory IDs, evidence, blockers and next action, without rewriting the original discovery baseline or approved plan. Serialize shared ledger/log updates. Follow the approved plan's execution restrictions, including one logical task at a time when required. Parallel work is permitted only where the approved plan allows it and the existing safety conditions below hold. Do not automatically commit, merge, discard changes or create conflicting shared state.
+
+On resume, inspect actual source changes, the coverage ledger, execution log and baseline references; verify the approval fingerprint, separate authorizations, prior evidence and current task state before dispatching more work. Reconcile additions, removals and changed source against the original baseline and approved target changes; unexpected drift or new scope is not silently accepted. Return affected tasks to review, and obtain renewed approval where the plan or scope must change. Never mark incomplete or interrupted workers complete.
+
 ### UI, assets and traceability
 
 For each Web Forms, MVC, Razor, server-rendered or hybrid UI task, compare original and target using the plan's page/component parity and source-to-target matrices. A task is incomplete unless:
@@ -103,11 +115,13 @@ Never delete or retire the legacy project based on general migration approval. F
 
 # 2. Mandatory Input Documents
 
-Before beginning migration, read the following documents completely:
+Before beginning migration, account for the complete contents of the following documents, using bounded sections and recorded handoffs when they cannot fit in one context:
 
 1. `UPGRADE_READINESS.md`
 2. `UPGRADE_PLAN.md`
 3. `UPGRADE_APPROVAL.md`
+
+Also inspect `UPGRADE_COVERAGE.md` and its original baseline. If missing, stale or inaccessible, record the limitation and obtain the missing read-only readiness reconciliation before executing affected work; never fabricate the baseline. Approved target edits recorded in the execution log do not themselves invalidate the preserved original baseline.
 
 These documents have distinct responsibilities.
 
