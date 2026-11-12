@@ -72,6 +72,8 @@ Create explicit tasks to preserve shared layouts/master pages, navigation/menus,
 
 For each database, plan a legacy-to-target schema and ORM table/column mapping covering tables, columns/types/nullability, keys/indexes/foreign keys/constraints, procedures/views/triggers, seed data, identity tables, session/cache tables, persisted serialized data and provider behavior. Distinguish read-only compatibility, additive backward-compatible, destructive, irreversible and data-transforming operations. Define existing data retention, before/after schema evidence, row-count and data-integrity checks, manual SQL verification queries, non-destructive rollout, backups and tested recovery/rollback limitations. Class/property names alone do not prove compatibility. Require separately recorded explicit user authorization for every proposed schema change, including additive changes; destructive, irreversible and data transformations also need specific authorization and must not be implied by general plan approval.
 
+Prefer retaining the existing schema and provider when compatible. For each necessary external database change, identify all known old and new application versions and external consumers, affected environments, generated SQL, locking and operational impact. Require review by the database owner or DBA, verification on an authorized representative non-production copy, old/new consumer compatibility evidence, backup and recovery verification, and separate authorization for the exact change and environment. Additive or idempotent does not itself mean non-breaking. If evidence, access or approvals are unavailable, block the operation; do not auto-apply migrations at startup. Describe rollout and rollback limits without promising reversibility.
+
 Create separate compatibility and validation items for password hashes, authentication cookies, sessions/cart, tokens, 2FA, external login, roles/claims and password reset. A compatible hash does not imply compatible cookies, tokens or sessions. Plan explicit verification or manual procedures for existing-user login, registration, logout, password change/reset, lockout, 2FA, phone/email verification, external login, role-based authorization, cookie persistence and session/cart continuity, marking each applicable or evidenced Not Applicable.
 
 ### Safe decisions, configuration and deployment
@@ -79,6 +81,10 @@ Create separate compatibility and validation items for password hashes, authenti
 Infer a technical choice without asking only when evidence shows an effectively mandatory or sole supported path, it is reversible, behavior and public contracts do not change, no data-loss or deployment-risk change occurs and existing approved scope/requirements authorize it. Record decision, evidence, why alternatives are inapplicable and `Agent-inferred`; it is not user approval and does not authorize execution. For example, do not ask MVC versus Razor Pages if only one is practical and supported under the actual target and architecture; otherwise compare valid alternatives and ask when the choice is material.
 
 Ask for decisions affecting business behavior, public APIs/routes, database/schema changes, authentication continuity requirements, security policy, deployment topology, licensing, external contracts, data deletion/transformation, scope expansion or retirement of legacy systems. Investigate before asking; no inference overrides the mandatory plan approval and separate high-impact authorizations.
+
+Preserve existing business logic without modification by default, not just its observed outputs. Favor retaining compatible libraries and architecture and limit edits to those needed for the approved framework migration. If modifying existing business logic appears necessary, identify the affected code, alternatives and impact as a blocker; propose the exception to the user and obtain a separate explicit decision and revised plan approval before executing it. General execution approval is not permission to change it.
+
+Consider YARP, side-by-side hosting and remote authentication only when the actual migration and identity-continuity needs justify them. Compare retaining the existing approach and other applicable options; record topology, routing, latency, availability, trust boundaries, secrets and retirement impact. Do not assume remote authentication also preserves sessions or cookies. A change to deployment or security needs explicit approval, not deterministic inference.
 
 Plan comparisons of `web.config`, `app.config`, appsettings, transforms, environment variables, Docker, launch settings, IIS, certificates, connection strings and external provider settings. Record setting names and redacted references, never credentials, private keys or token values in source, reports, plans, logs or prompts. Unavailable credentials/services mean Blocked or Not Tested, impact and manual validation, not disabled integrations, fake credentials or success-shaped defaults.
 
@@ -699,7 +705,7 @@ For each major Web Forms module, evaluate applicable options:
 
 1. Reimplementing the UI using ASP.NET Core MVC.
 2. Reimplementing the UI using Razor Pages.
-3. Extracting business logic into reusable services or APIs.
+3. Extracting business logic into reusable services or APIs only when necessary and subject to the business-logic preservation and exception gates above.
 4. Replacing server-side controls with frontend implementations.
 5. Temporarily retaining the legacy application as a separately hosted application.
 6. Gradually migrating modules using an incremental approach.
@@ -1219,7 +1225,7 @@ A possible structure is:
 - Confirm SDK and runtime.
 - Establish baseline build.
 - Capture existing test results.
-- Create a migration branch.
+- Verify the approved upgrade branch and clean pre-artifact baseline; arrange safe branch setup if not already established.
 - Establish rollback checkpoints.
 - Confirm deployment environment.
 - Resolve blocking decisions.
@@ -1237,7 +1243,7 @@ A possible structure is:
 
 - Migrate shared abstractions.
 - Migrate common utilities.
-- Migrate domain and business logic.
+- Migrate domain and business components without modifying existing business logic unless separately approved.
 - Migrate data access components.
 
 ## Wave 3: Hosting and Application Infrastructure
@@ -1553,7 +1559,7 @@ Only mark decisions as Approved when explicitly authorized by the user or covere
 
 Avoid presenting dozens of unrelated questions simultaneously.
 
-Group related decisions into manageable areas:
+After discovery and technical investigation, collect all known applicable unresolved material decisions into one organized decision review before final plan approval; group related questions into manageable areas:
 
 - Target framework and hosting.
 - Legacy web technologies.
@@ -1564,6 +1570,7 @@ Group related decisions into manageable areas:
 - Serialization and data compatibility.
 - Deployment and infrastructure.
 - Business functionality.
+- Source-control branch, commit and review checkpoints.
 
 Prioritize blockers and major architectural decisions first.
 
@@ -1572,6 +1579,7 @@ Ask concise questions with sufficient technical context.
 Use recommendations to make decisions easier.
 
 Do not ask for unnecessary preferences about implementation details the executor can determine safely.
+For each applicable item record options, recommendation, affected tasks, user decision and status. Reuse earlier answers, including branch setup decisions, and explicitly mark inapplicable items. No known blocking decision may be postponed solely to keep execution uninterrupted. Newly discovered material risks or decisions still require a pause and user consultation; preapproval does not authorize future unknowns, individual schema changes, commits or legacy retirement.
 
 ## 23.7 Three mandatory planning checkpoints
 
@@ -1592,7 +1600,7 @@ Investigate technical questions before escalating them.
 
 Before finalizing the migration plan:
 
-- Present significant unresolved decisions.
+- Present all known applicable unresolved material decisions together, organized by topic.
 - Explain alternatives.
 - Explain trade-offs.
 - Recommend an approach.

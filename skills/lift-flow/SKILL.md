@@ -73,6 +73,8 @@ Require comparison of `web.config`, `app.config`, appsettings, transforms, envir
 
 Infer a technical choice only when evidence establishes an effectively mandatory or sole supported path within approved requirements/scope, the choice is reversible, behavior and public contracts are unchanged and no data-loss or deployment-risk change occurs. Record decision, evidence and why alternatives do not apply as Agent-inferred, not user-approved. Do not ask MVC versus Razor Pages when only one practical supported option exists under these conditions. Ask when business behavior, public APIs/routes, schema changes, authentication continuity requirements, security policy, deployment topology, licensing, external contracts, data deletion/transformation, scope expansion or legacy retirement are affected. Inference never authorizes execution or bypasses fingerprint reapproval.
 
+After discovery, collect all known applicable material decisions into one organized decision review before final plan approval. Include scope, target, deployment, identity continuity, database changes, integrations, rollback, branch and commit/checkpoint preferences where unresolved; explain evidence, options, impacts and recommendations. Record answers and affected tasks in the plan. Investigate before asking, group related questions, and do not ask about inapplicable or already resolved items. Do not promise that later questions can never arise: stop affected work for newly discovered material risks or decisions and obtain any required reapproval. Initial branch setup may need a separate earlier question so the branch can be created before workflow artifacts change the worktree.
+
 Require a manual validation checklist in `UPGRADE_PLAN.md`, `UPGRADE_EXECUTION_LOG.md`, `UPGRADE_VALIDATION.md` and `REGRESSION_REPORT.md`. Each applicable item must include feature ID, exact URL/command/user action, required environment/data/credentials/service (names only), expected result, evidence to capture, pass/fail criteria, risk if it fails, responsible party and status. When automation, browser/runtime, data, credentials or services are unavailable, mark Not Tested, Partially Validated or Blocked; explain prerequisites and operational impact, and ask the user to perform safe checks where appropriate. No failure observed does not mean Passed. The executor records results in the log without changing the fingerprinted plan.
 
 ### Progress metrics in workflow state
@@ -334,6 +336,12 @@ If existing documents conflict, identify the conflict and ask the user when it a
 
 When the user starts the orchestrator:
 
+Before creating workflow artifacts, inspect repository identity, current branch, existing workflow artifacts and tracked, staged and untracked changes, including relevant submodule state. For a new workflow, if Git is unavailable, the repository cannot be inspected, or the worktree is dirty, report the situation and do not create or switch branches. Ask the user to resolve the state themselves; never stash, commit, reset, clean or discard their work. Do not claim a clean tree if inspection fails. Record the observed baseline without exposing secrets.
+
+On a clean worktree, ask for explicit permission and a new upgrade branch name or offer a name. Check that the name is valid and does not already exist; do not overwrite or switch to an unrelated existing branch. Only after explicit authorization create and switch to the new local branch, verify the branch and clean state, then record it in `UPGRADE_STATUS.md`. Do not push. If the user declines or branch creation fails, stop and request a safe alternative; never silently proceed on the existing branch. This setup does not authorize migration or commits.
+
+For an interrupted workflow, inspect its recorded branch, original clean baseline and artifacts before choosing a branch. If the current branch matches the recorded authorized upgrade branch, reconcile all current changes against the coverage ledger and execution log and resume the last verified checkpoint without creating another branch. Workflow artifacts or approved migration edits may make the tree dirty; preserve them and investigate unexpected changes. If branch identity, provenance or approval is uncertain, stop affected work and ask the user; never switch a dirty tree or assume its changes are disposable.
+
 ## 5.1 Understand the requested upgrade
 
 Identify:
@@ -555,6 +563,7 @@ Group related questions to avoid overwhelming the user.
 
 Do not ask questions whose answers are already documented.
 Apply the deterministic decision inference conditions above before escalating a technical choice; record inferred decisions as such, never as user-approved.
+After discovery, present all known applicable outstanding questions together as a structured decision review before final approval. Resolve blocking answers and record any explicitly deferred non-blocking decisions, their impact and affected tasks. If a new material question emerges later, pause affected work rather than inventing an answer.
 
 ## 7.3 Unresolved decisions
 

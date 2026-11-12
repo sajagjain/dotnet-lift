@@ -75,6 +75,8 @@ Never infer schema compatibility from matching class/property names. Obtain sepa
 
 Before any approved schema change, verify actual connectivity, inspect the real schema and confirm the target database/environment; preserve data, confirm backup and rollback feasibility, and record redacted before/after schema, row counts and integrity evidence. Use guarded, idempotent additive changes where approved and appropriate; avoid drop/recreate and destructive seed initializers. If any prerequisite is unavailable, block the operation rather than guessing or using a different database. Preserve ORM/identity/session/cache mappings, existing data, password hashes, token compatibility, query semantics, decimals, dates, nulls and identifiers.
 
+Prefer no schema change. Before applying a necessary change, require database-owner or DBA review of the exact generated SQL, evidence from an authorized representative non-production copy, checks for all known old and new application versions and external consumers, backup and recovery evidence, and separate explicit authorization for the specific change and target environment. Additive or idempotent changes are not automatically non-breaking. If any prerequisite is missing, block the operation; do not apply migrations automatically at startup or substitute a different environment.
+
 Record separate results for password hashes, authentication cookies, sessions/cart, tokens, 2FA, external logins, roles/claims and password reset. Verify or provide manual validation for existing-user login, registration, logout, password change/reset, lockout, 2FA, phone/email verification, external login, role authorization, cookie persistence and session/cart continuity. A valid legacy password hash alone proves none of the other continuity properties.
 
 Compare `web.config`, `app.config`, appsettings, transforms, environment variables, Docker, launch settings, IIS, certificates, connection strings and external provider settings. Never copy credentials, private keys, tokens or secrets into source, documentation, plans, execution/validation logs or prompts; use redacted setting references. Missing credentials/services mean Blocked or Not Tested, impact and a manual checklist, not fake credentials, silent disabling, removal or success-shaped defaults.
@@ -411,7 +413,7 @@ Preserve:
 - Logging.
 - Configuration behavior.
 
-Do not silently change business logic.
+Do not modify existing business logic by default, even if behavior appears unchanged. If migration requires altering it, stop the affected work, explain the impacted code and alternatives, and obtain a separate explicit user decision and renewed approval of the revised plan before any such change. Do not treat general plan approval as permission for an exception.
 
 ## 4.3 Follow the approved plan
 
@@ -493,6 +495,8 @@ Do not discard or overwrite user changes.
 Never execute destructive Git commands such as `git reset --hard` or broad cleanup commands that could delete existing work.
 
 Do not create commits, push branches, or modify remote repositories unless explicitly authorized.
+
+Verify the upgrade branch and recorded clean pre-artifact baseline established by `lift-flow`. If continuing on that recorded authorized branch, reconcile current changes against the artifacts and execution log; preserve workflow artifacts and approved migration edits, and stop affected work if unexpected changes or provenance are unclear. For standalone execution without a verified branch baseline, inspect tracked, staged and untracked changes and relevant submodule state before creating or switching to a branch. If dirty or inspection fails, stop branch creation and ask the user to resolve it; never automatically stash, commit, reset, clean or discard work. On a clean worktree, obtain explicit permission and a valid new branch name, check it does not exist, create it locally and verify it before migration. Do not assume pre-existing artifacts or changes are safe to move. No branch or commit action authorizes migration; plan approval and all separate gates still apply.
 
 ## 5.2 Development environment
 
@@ -909,7 +913,7 @@ If Web Forms exists, execute the explicit approved migration strategy.
 Potential migration work includes:
 
 - Reimplementing ASPX pages.
-- Moving business logic out of code-behind.
+- Moving business logic out of code-behind only when necessary and without modifying it unless separately approved.
 - Creating reusable application services.
 - Reimplementing master pages as layouts.
 - Replacing user controls.
@@ -1677,6 +1681,8 @@ After each logical task:
 Use source control checkpoints according to the repository's existing workflow.
 
 Do not automatically commit or push changes.
+
+At planned reviewable milestones and when work may be going in the wrong direction, summarize the diff, validation results, blockers and next steps; ask the user whether to commit now, continue or pause. An authorization to continue is not authorization to commit. For each commit obtain explicit approval of its exact scope, inspect staged and unstaged changes, and stage only the intended paths or hunks without including unrelated work or secrets. Verify the entire staged diff before committing; if it includes unapproved changes, stop and ask the user rather than unstaging or committing their work. Prefer separate reviewable procedural artifacts and logical migration changes where doing so does not break their dependencies; document when they must remain together. Record the commit and task IDs in the execution log. Never push, amend, reset or overwrite user changes without separate explicit authorization. A commit provides a checkpoint, not proof of correctness.
 
 ## 23.1 Change traceability
 
